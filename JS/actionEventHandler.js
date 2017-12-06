@@ -1,3 +1,8 @@
+/*
+|     Author  : Hwan Kim
+|     Created : 05/12/2017
+|     Project : Health Timer
+*/
 var actionEventTemplate;
 var completedActions = [];
 
