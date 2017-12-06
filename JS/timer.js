@@ -7,10 +7,11 @@ var defaultActionLocation = "healthTimer.action.default";
 var completedActionLocation = "healthTimer.action.compeleted";
 var on = false;
 var currentAction;
+var loadDefaultFromStorage = false;
 /*Default Action values*/
-var interval = 10;
+var interval = 1;
 var actionSet = 10;
-var timerType = ACTION_TIMER_TYPE.SECOND;
+var timerType = ACTION_TIMER_TYPE.HOUR;
 var actionName = "push ups";
 
 /*Init*/
@@ -111,14 +112,15 @@ function loadTimerAction() {
   }
 
   /* 2. Try to get default action*/
-  var defaultAction = localStorage.getObject(defaultActionLocation);
+  var defaultAction = loadDefaultFromStorage? localStorage.getObject(defaultActionLocation) : null;
   if (!defaultAction) {
     console.log("Found no default action");
     defaultAction = new TimerAction(actionName, interval, actionSet, timerType);
     localStorage.setObject(defaultAction, defaultActionLocation);
   } else {
-    defaultAction = new TimerAction(defaultAction);
-    console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
+    defaultAction = getTimeAction(defaultAction);
+	if(defaultAction.created)
+		console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
   }
 
   /* 3. Load saved comepleted action history.*/

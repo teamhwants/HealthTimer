@@ -39,17 +39,16 @@ function TimerAction( /*string*/ _action,
   this.created = new Date();
 }
 
-function TimerAction( /*object*/ _action) {
-  this.action = _action.action;
-  this.id = _action.id;
-  this.interval = _action.interval;
-  this.howMany = _action.howMany;
+function getTimeAction( /*object*/ _action) {
+	var newTimeAction = new TimerAction(_action.action, _action.interval, _action.howMany, _action.timerType);
+  newTimeAction.id = _action.id;
   if (_action.doneAt)
-    this.doneAt = new Date(_action.doneAt);
-  this.timerStarted = _action.timerStarted;
-  this.timerType = _action.timerType
+    newTimeAction.doneAt = new Date(_action.doneAt);
+  newTimeAction.timerStarted = _action.timerStarted;
+  newTimeAction.timerType = _action.timerType
   if (_action.created)
-    this.created = new Date(_action.created);
+    newTimeAction.created = new Date(_action.created);
+	return newTimeAction;
 }
 
 /*Cloning.*/
