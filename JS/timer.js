@@ -3,11 +3,15 @@
 |     Created : 05/12/2017
 |     Project : Health Timer
 */
+var defaultActionLocation = "healthTimer.action.default";
+var completedActionLocation = "healthTimer.action.compeleted";
 var on = false;
-var startedTime = null;
-var timerId;
 var currentAction;
+/*Default Action values*/
+var interval = 10;
+var actionSet = 10;
 var timerType = ACTION_TIMER_TYPE.SECOND;
+var actionName = "push ups";
 
 /*Init*/
 $(document).ready(function() {
@@ -88,13 +92,71 @@ function notifyMe() {
 }
 
 /*File IO*/
-function loadTimerAction() {
-  //TODO: add load function.
-  return new TimerAction("push up", 10, 10, timerType);
+
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
 }
 
-function saveTimerAction() {
-  //TODO: add save function.
+function loadTimerAction() {
+  console.log(">>>loadTimerAction()");
+
+  /* 1. Check html 5 local storage is avaible.*/
+  if (!supports_html5_storage()) {
+    console.log("FAIL!! not supports_html5_storage");
+    return new TimerAction(actionName, interval, actionSet, timerType);
+  }
+
+  /* 2. Try to get default action*/
+  var defaultAction = localStorage.getObject(defaultActionLocation);
+  if (!defaultAction) {
+    console.log("Found no default action");
+    defaultAction = new TimerAction(actionName, interval, actionSet, timerType);
+    localStorage.setObject(defaultAction, defaultActionLocation);
+  } else {
+    defaultAction = new TimerAction(defaultAction);
+    console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
+  }
+
+  /* 3. Load saved comepleted action history.*/
+  var savedCompeletedActions = localStorage.getObject(completedActionLocation);
+  if (savedCompeletedActions) {
+    console.log("Found compeleted timer actions");
+    setCompletedActions(savedCompeletedActions);
+  } else {
+    console.log("No compeleted timer action found");
+  }
+
+  return defaultAction;
+}
+
+function saveTimerAction( /*TimerAction*/ completedAction) {
+  console.log(">>>saveTimerAction()");
+  if (!supports_html5_storage()) {
+    return false;
+  }
+  getCompletedActions().push(completedAction);
+  localStorage.setObject(getCompletedActions(), completedActionLocation);
+  return true;
+}
+
+
+Storage.prototype.setObject = function(value, key) {
+  console.log(">>>setObject(" + key + ")");
+  this.setItem(key, JSON.stringify(value));
+  console.log("<<<setObject(" + key + ")");
+}
+
+Storage.prototype.getObject = function(key) {
+  console.log(">>>getObject(" + key + ")");
+  var value = this.getItem(key);
+  console.log("<<<getObject(" + value + ")");
+  value = value && JSON.parse(value);
+  console.log("<<<getObject(" + value + ")");
+  return value;
 }
 
 /*String util*/
