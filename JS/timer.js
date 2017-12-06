@@ -46,8 +46,8 @@ function toggleTimer() {
 function updateTimer() {
   if (on) {
     document.getElementById("timer").innerHTML = getTimerString();
-    var duration = currentAction.getBetween(currentAction.timerType)
-    if (duration >= currentAction.interval && !onNotificationShow) {
+   
+    if (currentAction.isDue() && !onNotificationShow) {
       notifyMe();
     }
   }
@@ -163,15 +163,24 @@ Storage.prototype.getObject = function(key) {
 
 /*String util*/
 function getTimerString() {
-  var seconds = currentAction.getBetween(ACTION_TIMER_TYPE.SECOND),
-    minutes = currentAction.getBetween(ACTION_TIMER_TYPE.MINUTE),
-    hours = currentAction.getBetween(ACTION_TIMER_TYPE.HOUR);
+	var duration = new Date().getTime() - currentAction.timerStarted;
+    var milliseconds = parseInt((duration%1000)/100)
+        , seconds = parseInt((duration/1000)%60)
+        , minutes = parseInt((duration/(1000*60))%60)
+        , hours = parseInt((duration/(1000*60*60))%24);
 
-  hours = leftPad(hours, 2);
-  hours = ((hours > 0) ? hours + "h " : "");
-  minutes = leftPad(minutes, 2);
-  seconds = leftPad(seconds, 2);
-  return hours + minutes + ":" + seconds;
+	if(hours > 0)
+	{
+		hours = (hours < 10) ? "0" + hours : hours;
+		hours += ":"
+	}
+	else
+	{
+		hours = "";
+	}
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+	return hours + minutes + ":" + seconds;
 }
 
 function leftPad(number, targetLength) {

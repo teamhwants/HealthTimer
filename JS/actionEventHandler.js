@@ -11,6 +11,8 @@ function getCompletedActions() {
 }
 
 Date.prototype.isSameDateAs = function(pDate) {
+	if(!pDate)
+		return false;
   var isIt = false;
   isIt = (
     this.getFullYear() === pDate.getFullYear() &&

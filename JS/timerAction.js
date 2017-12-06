@@ -68,15 +68,20 @@ TimerAction.prototype.complete = function() {
   this.start();
 }
 /*Time Calculation.*/
-TimerAction.prototype.getBetween = function( /*ACTION_TIMER_TYPE*/ timerType) {
-  var distance = new Date().getTime() - this.timerStarted;
-  if (timerType == ACTION_TIMER_TYPE.HOUR) {
-    return parseInt((distance / (1000 * 60 * 60)) % 24);
-  } else if (timerType == ACTION_TIMER_TYPE.MINUTE) {
-    return parseInt((distance / (1000 * 60)) % 60);
-  } else {
-    return parseInt((distance / 1000));
-  }
+TimerAction.prototype.isDue = function(){
+	var duration = new Date().getTime() - currentAction.timerStarted;
+    var milliseconds = parseInt((duration%1000)/100)
+        , seconds = parseInt((duration/1000)%60)
+        , minutes = parseInt((duration/(1000*60))%60)
+        , hours = parseInt((duration/(1000*60*60))%24);
+		
+	if (timerType == ACTION_TIMER_TYPE.HOUR) {
+		return hours >= this.interval;
+	} else if (timerType == ACTION_TIMER_TYPE.MINUTE) {
+		return minutes >= this.interval;
+	} else {
+     return seconds >= this.interval;
+	}	
 }
 TimerAction.prototype.timeout = function() {
   if (timerType == ACTION_TIMER_TYPE.HOUR) {
