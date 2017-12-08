@@ -9,9 +9,9 @@ var on = false;
 var currentAction;
 var loadDefaultFromStorage = false;
 /*Default Action values*/
-var interval = 1;
+var interval = 5;
 var actionSet = 10;
-var timerType = ACTION_TIMER_TYPE.HOUR;
+var timerType = ACTION_TIMER_TYPE.SECOND;
 var actionName = "push ups";
 
 /*Init*/
@@ -46,7 +46,7 @@ function toggleTimer() {
 function updateTimer() {
   if (on) {
     document.getElementById("timer").innerHTML = getTimerString();
-   
+
     if (currentAction.isDue() && !onNotificationShow) {
       notifyMe();
     }
@@ -112,15 +112,15 @@ function loadTimerAction() {
   }
 
   /* 2. Try to get default action*/
-  var defaultAction = loadDefaultFromStorage? localStorage.getObject(defaultActionLocation) : null;
+  var defaultAction = loadDefaultFromStorage ? localStorage.getObject(defaultActionLocation) : null;
   if (!defaultAction) {
     console.log("Found no default action");
     defaultAction = new TimerAction(actionName, interval, actionSet, timerType);
     localStorage.setObject(defaultAction, defaultActionLocation);
   } else {
     defaultAction = getTimeAction(defaultAction);
-	if(defaultAction.created)
-		console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
+    if (defaultAction.created)
+      console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
   }
 
   /* 3. Load saved comepleted action history.*/
@@ -140,7 +140,6 @@ function saveTimerAction( /*TimerAction*/ completedAction) {
   if (!supports_html5_storage()) {
     return false;
   }
-  getCompletedActions().push(completedAction);
   localStorage.setObject(getCompletedActions(), completedActionLocation);
   return true;
 }
@@ -161,26 +160,24 @@ Storage.prototype.getObject = function(key) {
   return value;
 }
 
+
 /*String util*/
 function getTimerString() {
-	var duration = new Date().getTime() - currentAction.timerStarted;
-    var milliseconds = parseInt((duration%1000)/100)
-        , seconds = parseInt((duration/1000)%60)
-        , minutes = parseInt((duration/(1000*60))%60)
-        , hours = parseInt((duration/(1000*60*60))%24);
+  var duration = new Date().getTime() - currentAction.timerStarted;
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
-	if(hours > 0)
-	{
-		hours = (hours < 10) ? "0" + hours : hours;
-		hours += ":"
-	}
-	else
-	{
-		hours = "";
-	}
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-	return hours + minutes + ":" + seconds;
+  if (hours > 0) {
+    hours = (hours < 10) ? "0" + hours : hours;
+    hours += ":"
+  } else {
+    hours = "";
+  }
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+  return hours + minutes + ":" + seconds;
 }
 
 function leftPad(number, targetLength) {

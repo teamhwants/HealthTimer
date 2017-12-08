@@ -10,9 +10,14 @@ function getCompletedActions() {
   return completedActions;
 }
 
+function removeSavedCurrentData() {
+  completedActions = [];
+  localStorage.setObject(completedActions, completedActionLocation);
+}
+
 Date.prototype.isSameDateAs = function(pDate) {
-	if(!pDate)
-		return false;
+  if (!pDate)
+    return false;
   var isIt = false;
   isIt = (
     this.getFullYear() === pDate.getFullYear() &&
@@ -25,14 +30,37 @@ Date.prototype.isSameDateAs = function(pDate) {
 
 function setCompletedActions( /*array*/ actions) {
   completedActions = actions;
-  var today = new Date();
+  var groups = actions.reduce(function(r, action) {
+    var date = action.doneAt.split(('T'))[0];
+    //Group by date and action.
+    var groupKey = date + "(" + action.action + ")";
+    (r[groupKey]) ? r[groupKey].data.push(action): r[groupKey] = {
+      group: groupKey,
+      data: [getTimeAction(action)]
+    };
+    return r;
+  }, {});
 
-  completedActions.forEach(function(action) {
-    console.log("loading found action :" + action);
-    action = new TimerAction(action);
-    if (today.isSameDateAs(action.doneAt)) {
-      populateToView(action);
+  var result = Object.keys(groups).map(function(k) {
+    return groups[k];
+  });
+
+  result.forEach(function(group) {
+    var dateAndAction = group.group;
+    var total = 0;
+    group.data.forEach(function(action) {
+      total += action.howMany;
+    });
+
+    /*Get template.*/
+    if (!actionEventTemplate) {
+      actionEventTemplate = $('#hidden-template').html();
     }
+
+    var item = $(actionEventTemplate).clone();
+    $(item).find('#idDesc').html(dateAndAction);
+    $(item).find('#actionOccured').html(total);
+    $('#eventView').append(item);
   });
 }
 
@@ -52,10 +80,24 @@ function populateToView( /*TimerAction*/ action) {
 
   var item = $(actionEventTemplate).clone();
   $(item).find('#idDesc').html(action.getCompletedActionMsg());
-  $(item).find('#actionOccured').html(action.doneAt.toLocaleTimeString());
+  $(item).find('#actionOccured').html(action.doneAt);
   $('#eventView').append(item);
 }
 
 function actionSkipped( /*TimerAction*/ skippedAction) {
 
+}
+
+
+
+function getTimeAction( /*object*/ _action) {
+  var newTimeAction = new TimerAction(_action.action, _action.interval, _action.howMany, _action.timerType);
+  newTimeAction.id = _action.id;
+  if (_action.doneAt)
+    newTimeAction.doneAt = new Date(_action.doneAt);
+  newTimeAction.timerStarted = _action.timerStarted;
+  newTimeAction.timerType = _action.timerType
+  if (_action.created)
+    newTimeAction.created = new Date(_action.created);
+  return newTimeAction;
 }

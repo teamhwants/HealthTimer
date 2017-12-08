@@ -39,18 +39,6 @@ function TimerAction( /*string*/ _action,
   this.created = new Date();
 }
 
-function getTimeAction( /*object*/ _action) {
-	var newTimeAction = new TimerAction(_action.action, _action.interval, _action.howMany, _action.timerType);
-  newTimeAction.id = _action.id;
-  if (_action.doneAt)
-    newTimeAction.doneAt = new Date(_action.doneAt);
-  newTimeAction.timerStarted = _action.timerStarted;
-  newTimeAction.timerType = _action.timerType
-  if (_action.created)
-    newTimeAction.created = new Date(_action.created);
-	return newTimeAction;
-}
-
 /*Cloning.*/
 TimerAction.prototype.copy = function() {
   var cloned = new TimerAction(this.action, this.interval, this.howMany, this.timerType);
@@ -74,14 +62,14 @@ TimerAction.prototype.isDue = function(){
         , seconds = parseInt((duration/1000)%60)
         , minutes = parseInt((duration/(1000*60))%60)
         , hours = parseInt((duration/(1000*60*60))%24);
-		
+
 	if (timerType == ACTION_TIMER_TYPE.HOUR) {
 		return hours >= this.interval;
 	} else if (timerType == ACTION_TIMER_TYPE.MINUTE) {
 		return minutes >= this.interval;
 	} else {
      return seconds >= this.interval;
-	}	
+	}
 }
 TimerAction.prototype.timeout = function() {
   if (timerType == ACTION_TIMER_TYPE.HOUR) {
