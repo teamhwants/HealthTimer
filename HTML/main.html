@@ -44,7 +44,9 @@
   <div class="ui inverted huge borderless fixed fluid menu">
     <a class="header item">Health Timer</a>
     <div class="right menu">
-      <a class="item" onclick="removeSavedCurrentData()">EmptyAllData</a>
+      <div class="item" data-tooltip="This action NEVER be un-done!!" data-position="bottom right">
+        <a id="emptyAllDataBtn">EmptyAllData</a>
+      </div>
     </div>
   </div>
   <div class="ui grid">
@@ -69,34 +71,49 @@
               </h2>
             </div>
           </div>
+          <!-- Header action menu -->
+          <div class="ui divider"></div>
+          <div class="row">
+            <div class="ui action labeled input ">
+              <label for="actionName" class="ui label">Action</label>
+              <input placeholder="Action..." type="text" value="push ups" id="setActionName" />
+              <label for="howMany" class="ui label">How Many</label>
+              <input placeholder="HowMany..." type="number" value="10" id="setHowMany" />
+              <label for="interval" class="ui label">Every</label>
+              <input type="number" value="1" id="setInterval" />
+              <select class="ui compact selection dropdown" id="setActionType">
+                  <option selected="" value="0">Hours</option>
+                  <option value="1">Minutes</option>
+                  <option value="2">Seconds</option>
+                </select>
+              <div type="submit" class="ui primary button" id="setActionBtn">Set</div>
+            </div>
+          </div>
           <!-- Header -->
           <div class="ui divider"></div>
           <div class="row">
-            <div class="four wide column">
-              <div class="ui large green label" id="timerInterval">
-                Every an hour
+            <div class="ui action labeled input ">
+              <div type="submit" class="ui primary button" id="toggleTimerBtn">Start</div>
+              <div class="ui disabled input">
+                <input placeholder="Action..." type="text" value="10 push ups" id="actionDesc">
               </div>
-            </div>
-            <div class="three wide column">
-              <button class="ui button" id="toggleTimerBtn">
-                Start
-            </button>
-            </div>
-            <div class="right floated four wide column ">
-              <h2 class="ui huge header" id="timer">
-            00:00
-          </h2>
+              <label for="timer" class="ui label" id="timerInterval">Every an hour</label>
+              <div class="ui disabled input">
+                <input value="00:00" id="timer" />
+              </div>
+              <div type="submit" class="ui primary button" id="justDidBtn">I just did.</div>
             </div>
           </div>
-          <!--  Timer Details Row -->
-          <div class="ui divider"></div>
-          <div class="row">
-            <div class="ui feed" id="eventView">
-            </div>
+        </div>
+        <!--  Timer Details Row -->
+        <div class="ui divider"></div>
+        <div class="row">
+          <div class="ui feed" id="eventView">
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
   <style type="text/css ">
     body {

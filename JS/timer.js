@@ -7,11 +7,11 @@ var defaultActionLocation = "healthTimer.action.default";
 var completedActionLocation = "healthTimer.action.compeleted";
 var on = false;
 var currentAction;
-var loadDefaultFromStorage = false;
+var loadDefaultFromStorage = true;
 /*Default Action values*/
-var interval = 5;
+var interval = 1;
 var actionSet = 10;
-var timerType = ACTION_TIMER_TYPE.SECOND;
+var timerType = ACTION_TIMER_TYPE.HOUR;
 var actionName = "push ups";
 
 /*Init*/
@@ -19,13 +19,38 @@ $(document).ready(function() {
   init();
 });
 
+function removeSavedCurrentData() {
+  completedActions = [];
+  localStorage.setObject(completedActions, completedActionLocation);
+}
+
 function init() {
+  $('#emptyAllDataBtn').click(function() {
+    removeSavedCurrentData();
+    location.reload();
+  });
+
+  $('#setActionBtn').click(function() {
+    actionName = $('#setActionName').val();
+    howMany = $('#setHowMany').val();
+    interval = $('#setInterval').val();
+    timerType = ACTION_TIMER_TYPE_ARRAY[$('#setActionType').find(":selected").val()];
+    currentAction = new TimerAction(actionName, interval, howMany, timerType);
+    localStorage.setObject(currentAction, defaultActionLocation);
+    updateCurrentActionView();
+  });
+
   currentAction = loadTimerAction();
   setInterval(updateCurrentTime, 1000);
   $("#toggleTimerBtn").click(function() {
     toggleTimer();
   });
-  updateTimerIntervalLable();
+
+  updateCurrentActionView();
+  $('#justDidBtn').click(function() {
+    currentAction.complete(); //will reset started time.
+    addCompletedAction(currentAction.copy());
+  });
 }
 
 /*Button click*/
@@ -38,24 +63,32 @@ function toggleTimer() {
     currentAction.id = setInterval(updateTimer, 500);
   } else {
     clearInterval(currentAction.id);
-    document.getElementById("timer").innerHTML = "00:00";
+    $("#timer").val("00:00");
   }
 }
 
 /*Update methods*/
+function updateMenuActionView( /*TimerAction*/ action) {
+  $('#setActionName').val(action.action);
+  $('#setHowMany').val(action.howMany);
+  $('#setInterval').val(action.interval);
+  $("#setActionType select").val(action.timerType.value);
+}
+
+function updateCurrentActionView() {
+  $('#actionDesc').val(currentAction.howMany + " " + currentAction.action);
+  $('#timerInterval').html(currentAction.getTimerDesc());
+  $("#timer").val("00:00");
+}
+
 function updateTimer() {
   if (on) {
-    document.getElementById("timer").innerHTML = getTimerString();
+    $("#timer").val(getTimerString());
 
     if (currentAction.isDue() && !onNotificationShow) {
       notifyMe();
     }
   }
-}
-
-function updateTimerIntervalLable() {
-  document.getElementById("timerInterval").innerHTML =
-    currentAction.getTimerDesc();
 }
 
 function updateCurrentTime() {
@@ -93,7 +126,6 @@ function notifyMe() {
 }
 
 /*File IO*/
-
 function supports_html5_storage() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;
@@ -119,6 +151,7 @@ function loadTimerAction() {
     localStorage.setObject(defaultAction, defaultActionLocation);
   } else {
     defaultAction = getTimeAction(defaultAction);
+    updateMenuActionView(defaultAction);
     if (defaultAction.created)
       console.log("Found default action created at " + defaultAction.created.toLocaleTimeString());
   }

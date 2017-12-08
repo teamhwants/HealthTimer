@@ -18,6 +18,7 @@ var ACTION_TIMER_TYPE = {
     name: "sec"
   }
 };
+var ACTION_TIMER_TYPE_ARRAY = [ACTION_TIMER_TYPE.HOUR, ACTION_TIMER_TYPE.MINUTE, ACTION_TIMER_TYPE.SECOND];
 /*
  * class TimerAction, this will be data object for health timer.
  * defulat constructor.
@@ -56,20 +57,20 @@ TimerAction.prototype.complete = function() {
   this.start();
 }
 /*Time Calculation.*/
-TimerAction.prototype.isDue = function(){
-	var duration = new Date().getTime() - currentAction.timerStarted;
-    var milliseconds = parseInt((duration%1000)/100)
-        , seconds = parseInt((duration/1000)%60)
-        , minutes = parseInt((duration/(1000*60))%60)
-        , hours = parseInt((duration/(1000*60*60))%24);
+TimerAction.prototype.isDue = function() {
+  var duration = new Date().getTime() - currentAction.timerStarted;
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
-	if (timerType == ACTION_TIMER_TYPE.HOUR) {
-		return hours >= this.interval;
-	} else if (timerType == ACTION_TIMER_TYPE.MINUTE) {
-		return minutes >= this.interval;
-	} else {
-     return seconds >= this.interval;
-	}
+  if (timerType == ACTION_TIMER_TYPE.HOUR) {
+    return hours >= this.interval;
+  } else if (timerType == ACTION_TIMER_TYPE.MINUTE) {
+    return minutes >= this.interval;
+  } else {
+    return seconds >= this.interval;
+  }
 }
 TimerAction.prototype.timeout = function() {
   if (timerType == ACTION_TIMER_TYPE.HOUR) {

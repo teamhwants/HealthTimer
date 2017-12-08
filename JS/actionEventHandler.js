@@ -10,11 +10,6 @@ function getCompletedActions() {
   return completedActions;
 }
 
-function removeSavedCurrentData() {
-  completedActions = [];
-  localStorage.setObject(completedActions, completedActionLocation);
-}
-
 Date.prototype.isSameDateAs = function(pDate) {
   if (!pDate)
     return false;
@@ -87,8 +82,6 @@ function populateToView( /*TimerAction*/ action) {
 function actionSkipped( /*TimerAction*/ skippedAction) {
 
 }
-
-
 
 function getTimeAction( /*object*/ _action) {
   var newTimeAction = new TimerAction(_action.action, _action.interval, _action.howMany, _action.timerType);
