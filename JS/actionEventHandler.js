@@ -44,7 +44,7 @@ function setCompletedActions( /*array*/ actions) {
     var dateAndAction = group.group;
     var total = 0;
     group.data.forEach(function(action) {
-      total += action.howMany;
+      total += Number(action.howMany);
     });
 
     /*Get template.*/
@@ -84,7 +84,8 @@ function actionSkipped( /*TimerAction*/ skippedAction) {
 }
 
 function getTimeAction( /*object*/ _action) {
-  var newTimeAction = new TimerAction(_action.action, _action.interval, _action.howMany, _action.timerType);
+  var newTimeAction = new TimerAction(_action.action, _action.interval,
+    _action.howMany, _action.timerType);
   newTimeAction.id = _action.id;
   if (_action.doneAt)
     newTimeAction.doneAt = new Date(_action.doneAt);

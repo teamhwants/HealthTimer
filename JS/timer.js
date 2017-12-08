@@ -33,10 +33,21 @@ function init() {
   $('#setActionBtn').click(function() {
     actionName = $('#setActionName').val();
     howMany = $('#setHowMany').val();
-    interval = $('#setInterval').val();
     timerType = ACTION_TIMER_TYPE_ARRAY[$('#setActionType').find(":selected").val()];
+    interval = $('#setInterval').val();
+    if (interval >= 60) {
+      if (timerType == ACTION_TIMER_TYPE.MINUTE) {
+        timerType = ACTION_TIMER_TYPE.HOUR;
+        interval -= 59;
+      } else if (timerType == ACTION_TIMER_TYPE.SECOND) {
+        timerType = ACTION_TIMER_TYPE.MINUTE;
+        interval -= 59;
+      }
+    }
+
     currentAction = new TimerAction(actionName, interval, howMany, timerType);
     localStorage.setObject(currentAction, defaultActionLocation);
+    updateMenuActionView(currentAction);
     updateCurrentActionView();
   });
 
@@ -72,7 +83,8 @@ function updateMenuActionView( /*TimerAction*/ action) {
   $('#setActionName').val(action.action);
   $('#setHowMany').val(action.howMany);
   $('#setInterval').val(action.interval);
-  $("#setActionType select").val(action.timerType.value);
+  $("#setActionType select").removeAttr('selected');
+  $("#setActionType option[value=" + action.timerType.value + "]").prop('selected', true);
 }
 
 function updateCurrentActionView() {
