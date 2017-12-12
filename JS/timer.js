@@ -207,6 +207,7 @@ function saveTimerAction( /*TimerAction*/ completedAction) {
     return false;
   }
   localStorage.setObject(getCompletedActions(), completedActionLocation);
+  updateTotal();
   return true;
 }
 
