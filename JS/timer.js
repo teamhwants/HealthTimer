@@ -13,7 +13,6 @@ var interval = 1;
 var actionSet = 10;
 var timerType = ACTION_TIMER_TYPE.HOUR;
 var actionName = "push ups";
-
 /*Init*/
 $(document).ready(function() {
   init();
@@ -24,7 +23,29 @@ function removeSavedCurrentData() {
   localStorage.setObject(completedActions, completedActionLocation);
 }
 
+function getOldestActionRecord() {
+  orderedDates = localStorage.getObject(completedActionLocation).sort(function(a, b) {
+    return Date.parse(a.doneAt) > Date.parse(b.doneAt);
+  });
+  return orderedDates[0];
+}
+
+function totalActionDone() {
+  var count = 0;
+  localStorage.getObject(completedActionLocation).forEach(function(action) {
+    count += action.howMany;
+  });
+  return count;
+}
+
+function updateTotal() {
+  $('#since').html("Since " + getOldestActionRecord().doneAt.split(('T'))[0]);
+  $('#totalActivity').html(totalActionDone());
+}
+
 function init() {
+  updateTotal();
+
   $('#emptyAllDataBtn').click(function() {
     removeSavedCurrentData();
     location.reload();
