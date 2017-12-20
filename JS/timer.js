@@ -23,26 +23,6 @@ function removeSavedCurrentData() {
   localStorage.setObject(completedActions, completedActionLocation);
 }
 
-function getOldestActionRecord() {
-  orderedDates = localStorage.getObject(completedActionLocation).sort(function(a, b) {
-    return Date.parse(a.doneAt) > Date.parse(b.doneAt);
-  });
-  return orderedDates[0];
-}
-
-function totalActionDone() {
-  var count = 0;
-  localStorage.getObject(completedActionLocation).forEach(function(action) {
-    count += action.howMany;
-  });
-  return count;
-}
-
-function updateTotal() {
-  $('#since').html("Since " + getOldestActionRecord().doneAt.split(('T'))[0]);
-  $('#totalActivity').html(totalActionDone());
-}
-
 function init() {
   updateTotal();
 
@@ -126,10 +106,36 @@ function updateTimer() {
 
 function updateCurrentTime() {
   document.getElementById("currentTime").innerHTML =
-    new Date().toLocaleTimeString();
+    "CurrentTime : " + new Date().toLocaleTimeString();
 }
 
-/* OS Notification */
+/*  Stastics  */
+function getOldestActionRecord() {
+  if (localStorage.getObject(completedActionLocation)) {
+    orderedDates = localStorage.getObject(completedActionLocation).sort(function(a, b) {
+      return Date.parse(a.doneAt) > Date.parse(b.doneAt);
+    });
+    return orderedDates[0];
+  }
+}
+
+function totalActionDone() {
+  var count = 0;
+  localStorage.getObject(completedActionLocation).forEach(function(action) {
+    count += parseInt(action.howMany);
+  });
+  return count;
+}
+
+function updateTotal() {
+  var oldestActionRecord = getOldestActionRecord();
+  if (oldestActionRecord) {
+    $('#since').html("Completed activities, Since " + oldestActionRecord.doneAt.split(('T'))[0]);
+    $('#totalActivity').html(totalActionDone());
+  }
+}
+
+/* Actitivy Notification */
 var onNotificationShow = false;
 
 function notifyMe() {
@@ -226,7 +232,6 @@ Storage.prototype.getObject = function(key) {
   console.log("<<<getObject(" + value + ")");
   return value;
 }
-
 
 /*String util*/
 function getTimerString() {

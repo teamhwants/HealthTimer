@@ -51,19 +51,23 @@
   </div>
   <div class="ui grid">
     <div class="row">
-      <div class="column" id="sidebar">
+    </div>
+    <div class="row">
+      <div class="column" id="sidebar" style="width:10%;">
         <div class="left floated ui secondary vertical fluid menu">
           <a class="active item">Action Timer</a> <a class="item">Reports</a> <a class="item">Settings</a> <a class="item">Export</a>
         </div>
       </div>
       <!-- side bar menu -->
-      <div class="column" id="content">
+      <div class="column" id="content" style="width:85%;">
         <div class="ui grid">
+          <div class="row">
+          </div>
           <div class="row">
             <div class="right floated three wide column">
               <div class=" ui statistic">
                 <div class="label" id="since">
-                  Since
+                  completed activities, Since
                 </div>
                 <div class="value" id="totalActivity">
                   40,509
@@ -99,14 +103,14 @@
                   <option value="1">Minutes</option>
                   <option value="2">Seconds</option>
                 </select>
-              <div type="submit" class="ui primary button" id="setActionBtn">Set</div>
+              <div type="submit" class="ui blue basic button" id="setActionBtn">Set</div>
             </div>
           </div>
           <!-- Header -->
           <div class="ui divider"></div>
           <div class="row">
             <div class="ui action labeled input ">
-              <div type="submit" class="ui primary button" id="toggleTimerBtn">Start</div>
+              <div type="submit" class="ui blue basic button" id="toggleTimerBtn">Start</div>
               <div class="ui disabled input">
                 <input placeholder="Action..." type="text" value="10 push ups" id="actionDesc">
               </div>
@@ -114,7 +118,7 @@
               <div class="ui disabled input">
                 <input value="00:00" id="timer" />
               </div>
-              <div type="submit" class="ui primary button" id="justDidBtn">I just did.</div>
+              <div type="submit" class="ui blue basic button" id="justDidBtn">I just did.</div>
             </div>
           </div>
         </div>
